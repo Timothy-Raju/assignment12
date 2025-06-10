@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>weatherAPI</title>
+    <style>
+        body{
+            background-color: rgb(193, 180, 163);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            /* transform: translate(-50% -50%); */
+            translate: -50% -50%;
+        }
+        span{
+            color: white;
+            margin-right: 10px;
+        }
+        h1{
+            font-family: Arial;
+            color: white;
+            margin: 0;
+        }
+        p{
+            color: white;
+            margin-bottom: 0;
+            
+        }
+
+        .outer{
+            display: flex;
+            align-items: center;
+        }
+
+        .heading1{
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .data-div{
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            /* background-color: white; */
+        }
+        #js-input-city{
+            background-color: rgb(193, 180, 163) ;
+            border: none;
+            border-bottom: 2px solid white;
+            width: 200px;
+            color: white;
+        }
+        #search-button{
+            padding: 5px 6px;
+            border-radius: 12px;
+            border: 1px solid gray;
+            cursor: pointer;
+        }
+        .js-right{
+            width: 300px;
+            display: flex;
+        }
+        .div-time-day{
+            display: flex;
+        }
+        #js-weather{
+            font-size: 14px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="heading1">Weather App</h1>
+
+    <div class="outer">
+        <div class="data-div">
+            <h1 id="js-temperature"></h1>
+            <p id="js-city"></p>
+            <div class="div-time-day">
+                <span id="js-time"></span>
+                <span id="js-day"></span>
+            </div>
+            <p id="js-weather"></p>
+        </div>
+        <div class="right-div">
+            <input type="text" id="js-input-city" onkeydown="displayEnter(event);">
+            <button id="search-button" onclick="display();">Search Button</button>
+        </div>
+    </div>
+
+
+    <script>
+        let lat;
+        let lon;
+        let temperature;
+        let weatherDesc;
+        const api = '59c168727eb0d5333e80a453573c31b3';
+        let utcSeconds;
+        let timezoneOffset = 19800;//IST seconds (+5:30 GMT)
+        let localTime;
+        let time;
+        let day;
+
+        function display(){
+            let input = document.getElementById('js-input-city');
+            if(!input.value){
+                alert('Please specify the city!');
+                return 0;
+            }
+
+
+            //this is fetch for latitude and longitude
+            fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${input.value}&limit=1&appid=${api}`)
+            .then(response => {
+                if(!response.ok){
+                    throw new Error('Failed');
+                }
+                return response.json();
+            })
+            .then(data => {
+                lat = data[0].lat;
+                lon = data[0].lon;
+                // console.log(lat,lon);
+                //this is fetch for weather
+                return fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${api}`);
+            })
+            .then(response => {
+                if(!response.ok){
+                    throw new Error('Failed');
+                }
+                return response.json();
+            })
+            .then(weatherData => {
+                temperature = weatherData.main.temp - 273.15;
+                temperature = temperature.toFixed(2);
+                weatherDesc = weatherData.weather[0].description.toLowerCase();
+                utcSeconds = weatherData.dt;
+                //timezoneOffset = data.timezone;
+                localTime = new Date((utcSeconds + timezoneOffset) * 1000);
+                time = localTime.toLocaleTimeString('en-US');
+                day = localTime.toLocaleString('en-US', { weekday: 'long' });
+                document.getElementById('js-temperature').innerHTML = temperature;
+
+                document.getElementById('js-city').innerHTML = input.value.toUpperCase();
+
+                document.getElementById('js-time').innerHTML = time;
+
+                document.getElementById('js-day').innerHTML = day;
+
+                document.getElementById('js-weather').innerHTML = weatherDesc;
+            })
+            .catch(error => console.log('Error'))
+
+        }
+
+
+        function displayEnter(event){
+            if(event.key === 'Enter'){
+                display();
+            }
+        }
+        
+
+    </script>
+</body>
+</html>
