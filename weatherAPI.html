@@ -112,7 +112,7 @@
 
 
             //this is fetch for latitude and longitude
-            fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${input.value}&limit=1&appid=${api}`)
+            fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${input.value}&limit=1&appid=${api}`)
             .then(response => {
                 if(!response.ok){
                     throw new Error('Failed');
