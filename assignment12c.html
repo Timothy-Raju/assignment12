@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local storage</title>
+    <style>
+        body{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            background-color: rgb(191, 171, 152);
+        }
+        .div1{
+            display: flex;
+            flex-direction: column;
+            height: 75px;
+            justify-content: space-around;
+            width: 250px;
+            background-color: aqua;
+            align-items: center;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        input{
+            width:fit-content;
+            padding: 4px 8px;
+            background-color: transparent;
+            border: none;
+            border-bottom: 2px solid brown;
+            outline: none;
+            color: green;
+        }
+        input::placeholder{
+            color: white
+        }
+        .div2{
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: rgb(121, 112, 115);
+            width: 250px;
+            height: 30px;
+        }
+        button{
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="div1">
+        <input type="text" placeholder="Enter name" id="js-name">
+        <input type="text"  id="js-age" placeholder="Enter age" onkeydown="getSave(event);">
+    </div>
+    <div class="div2">
+        <button onclick="save();">Save</button>
+        <button onclick="load();" >Load</button>
+    </div>
+
+    <script>
+        function save(){
+            let name = document.getElementById('js-name').value;
+            let age = document.getElementById('js-age').value;
+            localStorage.setItem('name',name);
+            localStorage.setItem('age',age);
+            alert('Saved to Local Storage, successfully!');
+        }
+
+        function load(){
+            let name = document.getElementById('js-name');
+            let age = document.getElementById('js-age');
+            name.value = localStorage.getItem('name');
+            age.value = localStorage.getItem('age');
+        }
+
+        function getSave(event){
+            if(event.key === 'Enter'){
+                save();
+            }
+        }
+    </script>
+</body>
+</html>
